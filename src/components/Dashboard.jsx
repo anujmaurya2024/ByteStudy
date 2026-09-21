@@ -363,7 +363,7 @@ export default function Dashboard({
         <span className="text-[10px] text-slate-500 font-semibold tracking-wider uppercase">Project Status:</span>
         <span className="badge bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 text-[9px] font-bold">ByteStudy Beta v1.2</span>
         <span className="text-[10px] text-slate-400 dark:text-slate-600 font-mono">•</span>
-        <span className="text-[10px] text-slate-500 font-medium">Handcrafted with ❤️, caffeine, and late-night coding sessions by a B.Tech CS & IT student. Powered by local storage and offline Web Audio oscillators.</span>
+        <span className="text-[10px] text-slate-500 font-medium">Built by Anuj</span>
       </div>
     </div>
   );

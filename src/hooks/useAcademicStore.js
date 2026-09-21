@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { SYLLABUS, TOTAL_PROGRAM_CREDITS } from '../data/syllabus';
-import { clearActiveSession } from '../services/authApi';
+import { clearActiveSession, hasRemoteAuthApi, getAuthToken } from '../services/authApi';
+import { askAdvisor } from '../services/advisorApi';
 
 // ---- Storage Helpers (Standard hooks to keep state persisted) ----
 const getStorageItem = (key, fallback) => {
@@ -463,11 +464,24 @@ export function useAcademicStore() {
     };
 
     setAdvisorChat(prev => [...prev, newUserMessage]);
-    
-    // Simulate AI thinking and reply
-    setTimeout(() => {
-      askByteAI(text);
-    }, 600);
+
+    if (hasRemoteAuthApi() && getAuthToken()) {
+      askAdvisor(text)
+        .then((message) => {
+          setAdvisorChat(prev => [...prev, {
+            id: message.id || Date.now().toString(),
+            sender: 'ai',
+            text: message.text,
+            timestamp: message.timestamp || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          }]);
+        })
+        .catch(() => {
+          askByteAI(text);
+        });
+      return;
+    }
+
+    setTimeout(() => askByteAI(text), 600);
   }, [askByteAI]);
 
   // ---- Clear Chat logs ----
