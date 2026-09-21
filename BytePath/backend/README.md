@@ -44,9 +44,9 @@ mvn spring-boot:run
 ```
 
 ### 2. Access Swagger UI & H2 Console
-Once started (port `8080`):
-- **Swagger Documentation**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-- **H2 Database Console**: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
+Once started (port `8081`):
+- **Swagger Documentation**: [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html)
+- **H2 Database Console**: [http://localhost:8081/h2-console](http://localhost:8081/h2-console)
   - JDBC URL: `jdbc:h2:mem:bytepathdb`
   - Username: `sa`
   - Password: *(leave blank)*
@@ -57,8 +57,14 @@ Once started (port `8080`):
 
 In your frontend root directory, set `.env`:
 ```env
-VITE_AUTH_API_URL=http://localhost:8080/api
+VITE_AUTH_API_URL=http://localhost:8081/api
 ```
+
+For Google sign-in, also set `VITE_GOOGLE_CLIENT_ID` in the frontend `.env` and
+provide that same public value as `GOOGLE_CLIENT_ID` to the backend process. The
+root `START.bat` does this automatically. When starting Spring Boot from an IDE,
+add `GOOGLE_CLIENT_ID` to that run configuration's environment variables.
+
 Run the frontend:
 ```bash
 npm run dev

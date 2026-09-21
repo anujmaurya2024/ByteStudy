@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 
 import java.security.SecureRandom;
 import java.time.Year;
@@ -144,24 +145,40 @@ public class AuthService {
             throw new IllegalArgumentException("Google OAuth is not configured on the backend.");
         }
 
-        Map<String, Object> claims = RestClient.create()
-            .get()
-            .uri(uriBuilder -> uriBuilder
-                .scheme("https")
-                .host("oauth2.googleapis.com")
-                .path("/tokeninfo")
-                .queryParam("id_token", credential)
-                .build())
-            .retrieve()
-            .body(Map.class);
+        Map<String, Object> claims;
+        try {
+            claims = RestClient.create()
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                    .scheme("https")
+                    .host("oauth2.googleapis.com")
+                    .path("/tokeninfo")
+                    .queryParam("id_token", credential)
+                    .build())
+                .retrieve()
+                .body(Map.class);
+        } catch (RestClientException exception) {
+            throw new IllegalArgumentException("Google could not validate this sign-in. Please try again.");
+        }
 
-        if (claims == null || !googleClientId.equals(String.valueOf(claims.get("aud")))) {
+        String issuer = claims == null ? "" : String.valueOf(claims.get("iss"));
+        String email = claims == null ? "" : String.valueOf(claims.getOrDefault("email", ""));
+        boolean emailVerified = claims != null
+            && Boolean.parseBoolean(String.valueOf(claims.get("email_verified")));
+        boolean validIssuer = "https://accounts.google.com".equals(issuer)
+            || "accounts.google.com".equals(issuer);
+
+        if (claims == null
+            || !googleClientId.equals(String.valueOf(claims.get("aud")))
+            || !validIssuer
+            || !emailVerified
+            || email.isBlank()) {
             throw new IllegalArgumentException("Google credential is invalid for this application.");
         }
 
         return loginWithGoogle(
             String.valueOf(claims.getOrDefault("name", "Google Scholar")),
-            String.valueOf(claims.getOrDefault("email", ""))
+            email
         );
     }
 
