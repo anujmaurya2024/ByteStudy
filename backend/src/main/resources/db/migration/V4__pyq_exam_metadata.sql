@@ -1,0 +1,2 @@
+ALTER TABLE pyq_resources ADD COLUMN exam_type VARCHAR(32) NOT NULL DEFAULT 'GENERAL';
+ALTER TABLE pyq_resources ADD COLUMN exam_year INTEGER;
