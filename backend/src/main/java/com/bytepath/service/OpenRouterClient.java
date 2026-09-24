@@ -49,7 +49,7 @@ public class OpenRouterClient {
             if (response == null || response.isBlank()) return Optional.empty();
             JsonNode content = objectMapper.readTree(response).path("choices").path(0).path("message").path("content");
             return content.asText("").isBlank() ? Optional.empty() : Optional.of(content.asText().trim());
-        } catch (RuntimeException exception) {
+        } catch (Exception exception) {
             log.warn("OpenRouter request failed; using the application fallback", exception);
             return Optional.empty();
         }
