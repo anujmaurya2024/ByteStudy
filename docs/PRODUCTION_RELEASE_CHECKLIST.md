@@ -107,6 +107,43 @@ Only `VITE_*` values are exposed to browser JavaScript. Never put database passw
 9. Configure DNS and HTTPS for `app.example.com` and `api.example.com`.
 10. Run the smoke tests below.
 
+## Railway monorepo configuration
+
+Create two Railway services from the same GitHub repository. Railway’s monorepo deployment requires a separate root directory for each isolated app. Use `/backend` for the API service and `/frontend` for the web service. [Railway monorepo documentation](https://docs.railway.com/deployments/monorepo)
+
+### Backend service
+
+- Root Directory: `/backend`
+- Build Command: `mvn -B package -DskipTests`
+- Start Command: `java -jar target/bytepath-backend-1.0.0.jar`
+- Watch Path: `/backend/**`
+- Add all backend production variables from the section above.
+- Railway supplies `PORT`; the Spring application already reads it.
+
+### Frontend service
+
+- Root Directory: `/frontend`
+- Build Command: `npm ci && npm run build`
+- Start Command: `npm run preview -- --host 0.0.0.0 --port $PORT`
+- Watch Path: `/frontend/**`
+- Set `VITE_AUTH_API_URL` before deploying because Vite embeds `VITE_*` values into the build.
+
+After Railway generates public domains, set `FRONTEND_URL` and `CORS_ALLOWED_ORIGINS` to the frontend domain, then redeploy the backend. Set the frontend’s `VITE_AUTH_API_URL` to the backend domain plus `/api`, then redeploy the frontend. Railway’s frontend environment variables must be set before the build. [Railway frontend environment variables](https://docs.railway.com/guides/frontend-environment-variables)
+
+### Vercel frontend alternative
+
+Vercel is recommended for the frontend in this deployment plan. Create a Vercel Project from the same GitHub repository and set:
+
+- Root Directory: `frontend`
+- Framework Preset: `Vite`
+- Build Command: `npm run build`
+- Output Directory: `dist`
+- Install Command: `npm ci`
+- Production variable: `VITE_AUTH_API_URL=https://api.example.com/api`
+- Production variable: `VITE_RAZORPAY_KEY_ID=rzp_live_...`
+
+Deploy the Railway backend first, copy its HTTPS URL, set `VITE_AUTH_API_URL` in Vercel, and redeploy. Then set the Vercel production domain as the backend `FRONTEND_URL` and `CORS_ALLOWED_ORIGINS` value. Vercel supports multiple projects connected to different directories in one repository; its monorepo setup is documented [here](https://vercel.com/docs/monorepos).
+
 ## Production smoke tests
 
 ### Authentication

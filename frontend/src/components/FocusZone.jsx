@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, RotateCcw, Brain, Volume2, VolumeX, Sparkles, Smile, Trophy, ListCollapse } from 'lucide-react';
+import SpotifyPlayer from './SpotifyPlayer';
 
 export default function FocusZone({ focusSessions, setFocusSessions }) {
   // Pomodoro states
@@ -626,6 +627,8 @@ export default function FocusZone({ focusSessions, setFocusSessions }) {
           </div>
         </div>
       </div>
+
+      <SpotifyPlayer />
 
       {/* Focus registry ledger */}
       <div className="glass-card p-6 border border-slate-200 dark:border-indigo-950/20">
