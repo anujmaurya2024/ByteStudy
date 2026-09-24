@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Brain, Send, Trash2, ShieldAlert, Sparkles, MessageSquare, AlertCircle } from 'lucide-react';
 import { SYLLABUS } from '../data/syllabus';
+import MarkdownContent from './MarkdownContent';
 
 export default function AdvisorPanel({ 
   advisorChat, 
@@ -174,17 +175,7 @@ export default function AdvisorPanel({
                   }
                 `}>
                   {/* Handle markdown bold formatting locally */}
-                  <p className="whitespace-pre-line">
-                    {msg.text.split('\n').map((line, lIdx) => {
-                      // Simple regex bold matching **text**
-                      const parts = line.split('**');
-                      return (
-                        <span key={lIdx} className="block mt-1 first:mt-0">
-                          {parts.map((part, pIdx) => pIdx % 2 === 1 ? <strong key={pIdx} className="font-extrabold">{part}</strong> : part)}
-                        </span>
-                      );
-                    })}
-                  </p>
+                  <MarkdownContent text={msg.text} />
                   <span className={`block text-[9px] text-right mt-1.5 opacity-60 font-mono`}>
                     {msg.timestamp}
                   </span>

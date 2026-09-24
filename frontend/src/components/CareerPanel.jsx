@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowRight, Lightbulb, Rocket, Target, ExternalLink } from 'lucide-react';
 import { CAREER_INSIGHTS } from '../data/syllabus';
 import { buildCareerRoadmap } from '../services/careerApi';
+import MarkdownContent from './MarkdownContent';
 
 const PHASE_MAP = {
   '1-2': { sems: [1, 2], label: 'Semesters 1–2' },
@@ -252,7 +253,7 @@ export default function CareerPanel({ careerPhase, currentSemester }) {
           <button type="submit" disabled={roadmapLoading || !goal.trim()} className="btn-primary px-4 py-2.5 whitespace-nowrap disabled:opacity-50">{roadmapLoading ? 'Building…' : 'Build roadmap'}</button>
         </form>
         {roadmapError && <p className="text-xs text-rose-500 mt-3">{roadmapError}</p>}
-        {aiRoadmap && <div className="mt-4 p-4 rounded-xl bg-white/60 dark:bg-surface-800/40 border border-indigo-500/10 text-xs leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-line">{aiRoadmap}</div>}
+        {aiRoadmap && <div className="mt-4 p-4 rounded-xl bg-white/60 dark:bg-surface-800/40 border border-indigo-500/10 text-xs leading-relaxed text-slate-700 dark:text-slate-300"><MarkdownContent text={aiRoadmap} /></div>}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
