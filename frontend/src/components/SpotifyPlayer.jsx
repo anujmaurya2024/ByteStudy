@@ -10,6 +10,8 @@ export default function SpotifyPlayer() {
   const [manualUrl, setManualUrl] = useState('');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
+  const tracks = Array.isArray(results?.tracks?.items) ? results.tracks.items.filter(Boolean) : [];
+  const playlists = Array.isArray(results?.playlists?.items) ? results.playlists.items.filter(Boolean) : [];
 
   useEffect(() => { spotifyHandleCallback().then((token) => { if (token) setConnected(true); }).catch((error) => setMessage(error.message)); }, []);
 
@@ -30,8 +32,8 @@ export default function SpotifyPlayer() {
         <div>
           {connected && <form onSubmit={search} className="flex gap-2 mb-3"><div className="flex-1 flex items-center gap-2 px-3 rounded-xl border border-slate-200 dark:border-surface-500/30 bg-white/50 dark:bg-surface-700/30"><Search size={14} className="text-slate-400" /><input value={query} onChange={(event) => setQuery(event.target.value)} className="w-full py-2.5 bg-transparent text-xs focus:outline-none" placeholder="Search Spotify" /></div><button className="px-3 rounded-xl border border-slate-200 dark:border-surface-500/30 text-xs font-bold" disabled={busy}>{busy ? '...' : 'Search'}</button></form>}
           <div className="space-y-2 max-h-52 overflow-y-auto">
-            {(results.tracks?.items || []).map((track) => <button key={track.id} onClick={() => setEmbedUrl(spotifyTrackEmbedUrl(track.external_urls.spotify))} className="w-full text-left flex items-center gap-3 p-2 rounded-xl hover:bg-emerald-500/10 transition-colors"><img src={track.album.images?.[2]?.url || track.album.images?.[0]?.url} alt="" className="w-10 h-10 rounded-lg object-cover" /><span className="min-w-0"><span className="block text-xs font-bold truncate">{track.name}</span><span className="block text-[10px] text-slate-500 truncate">{track.artists.map((artist) => artist.name).join(', ')}</span></span></button>)}
-            {(results.playlists?.items || []).map((playlist) => <button key={playlist.id} onClick={() => setEmbedUrl(spotifyTrackEmbedUrl(playlist.external_urls.spotify))} className="w-full text-left flex items-center gap-3 p-2 rounded-xl hover:bg-emerald-500/10 transition-colors"><img src={playlist.images?.[0]?.url} alt="" className="w-10 h-10 rounded-lg object-cover" /><span className="text-xs font-bold truncate">{playlist.name}</span></button>)}
+            {tracks.map((track) => <button key={track.id} onClick={() => setEmbedUrl(spotifyTrackEmbedUrl(track.external_urls?.spotify || ''))} className="w-full text-left flex items-center gap-3 p-2 rounded-xl hover:bg-emerald-500/10 transition-colors"><img src={track.album?.images?.[2]?.url || track.album?.images?.[0]?.url} alt="" className="w-10 h-10 rounded-lg object-cover" /><span className="min-w-0"><span className="block text-xs font-bold truncate">{track.name || 'Spotify track'}</span><span className="block text-[10px] text-slate-500 truncate">{(track.artists || []).map((artist) => artist.name).join(', ')}</span></span></button>)}
+            {playlists.map((playlist) => <button key={playlist.id} onClick={() => setEmbedUrl(spotifyTrackEmbedUrl(playlist.external_urls?.spotify || ''))} className="w-full text-left flex items-center gap-3 p-2 rounded-xl hover:bg-emerald-500/10 transition-colors"><img src={playlist.images?.[0]?.url} alt="" className="w-10 h-10 rounded-lg object-cover" /><span className="text-xs font-bold truncate">{playlist.name || 'Spotify playlist'}</span></button>)}
           </div>
           {!spotifyIsConfigured() && <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-3">Add <code>VITE_SPOTIFY_CLIENT_ID</code> to enable Spotify search, or paste a link below.</p>}
           {message && <p className="text-[10px] text-rose-500 mt-3">{message}</p>}
