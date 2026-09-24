@@ -172,6 +172,7 @@ export default function CareerPanel({ careerPhase, currentSemester }) {
   const insightData = CAREER_INSIGHTS[selectedPhase];
   const phaseOrder = ['1-2', '3-4', '5-6', '7-8'];
   const [goal, setGoal] = useState('Become a job-ready full-stack developer');
+  const [duration, setDuration] = useState('90');
   const [aiRoadmap, setAiRoadmap] = useState('');
   const [roadmapLoading, setRoadmapLoading] = useState(false);
   const [roadmapError, setRoadmapError] = useState('');
@@ -186,7 +187,7 @@ export default function CareerPanel({ careerPhase, currentSemester }) {
     setRoadmapLoading(true);
     setRoadmapError('');
     try {
-      setAiRoadmap(await buildCareerRoadmap({ goal, phase: insightData?.phase || selectedPhase, semester: currentSemester }));
+      setAiRoadmap(await buildCareerRoadmap({ goal, duration, phase: insightData?.phase || selectedPhase, semester: currentSemester }));
     } catch (error) {
       setRoadmapError(error.message);
     } finally {
@@ -250,6 +251,7 @@ export default function CareerPanel({ careerPhase, currentSemester }) {
         <p className="text-xs text-slate-500 mb-4">Tell ByteAI what you want to become and get a practical, semester-aware plan.</p>
         <form onSubmit={generateRoadmap} className="flex flex-col sm:flex-row gap-2">
           <input value={goal} onChange={(event) => setGoal(event.target.value)} className="app-input flex-1" placeholder="e.g. Become a cybersecurity analyst" />
+          <input value={duration} onChange={(event) => setDuration(event.target.value.replace(/[^0-9]/g, '').slice(0, 3))} className="app-input sm:w-28" inputMode="numeric" min="1" max="365" aria-label="Roadmap duration in days" placeholder="Days" />
           <button type="submit" disabled={roadmapLoading || !goal.trim()} className="btn-primary px-4 py-2.5 whitespace-nowrap disabled:opacity-50">{roadmapLoading ? 'Building…' : 'Build roadmap'}</button>
         </form>
         {roadmapError && <p className="text-xs text-rose-500 mt-3">{roadmapError}</p>}

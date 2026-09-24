@@ -101,8 +101,9 @@ public class AdvisorService {
             currentSem, currentCgpa, targetCgpa, remaining,
             predictor.requiredSgpa(), attendancePct, String.join(", ", activeSubjects)
         );
-        String aiSystem = "You are ByteAI, a concise and supportive academic advisor for a B.Tech CS student. Ground answers in the supplied academic context. Be practical, honest about uncertainty, and format useful plans with Markdown. Do not invent grades, attendance, policies, or deadlines.";
-        String reply = openRouterClient.ask(aiSystem, academicContext + "\n\nStudent question: " + userText.trim(), 900)
+        String aiSystem = "You are ByteAI, a concise and supportive academic advisor for a B.Tech CS student. Ground every academic answer in the supplied BytePath context and syllabus. Prefer the student's current semester, but connect prerequisites and later subjects when useful. Be practical, honest about uncertainty, and format useful plans with Markdown. Do not invent grades, attendance, policies, or deadlines.";
+        String groundedContext = academicContext + "\n\nFULL BYTEPATH SYLLABUS:\n" + SyllabusData.catalogSummary();
+        String reply = openRouterClient.ask(aiSystem, groundedContext + "\n\nStudent question: " + userText.trim(), 1200)
             .or(() -> ragClient.ask(userText.trim(), academicContext))
             .orElseGet(() -> generateReply(userText.toLowerCase(), currentSem, currentCgpa, targetCgpa, remaining, predictor, attendancePct, activeSubjects));
 

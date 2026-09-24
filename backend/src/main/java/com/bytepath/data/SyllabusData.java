@@ -243,6 +243,23 @@ public final class SyllabusData {
         ));
     }
 
+    /** Compact curriculum context suitable for grounding an AI request. */
+    public static String catalogSummary() {
+        StringBuilder summary = new StringBuilder("BytePath B.Tech CS & IT curriculum (196 credits):\n");
+        for (Semester semester : SYLLABUS) {
+            summary.append("Semester ").append(semester.semester())
+                .append(" (" ).append(semester.totalCredits()).append(" credits): ");
+            for (int i = 0; i < semester.courses().size(); i++) {
+                Course course = semester.courses().get(i);
+                if (i > 0) summary.append("; ");
+                summary.append(course.code()).append(" ").append(course.title())
+                    .append(" [").append(course.credits()).append("cr, ").append(course.type()).append("]");
+            }
+            summary.append("\n");
+        }
+        return summary.toString();
+    }
+
     /** Resolve semester number → career phase string ("1-2", "3-4", "5-6", "7-8"). */
     public static String careerPhaseFor(int semesterNumber) {
         if (semesterNumber <= 2) return "1-2";
