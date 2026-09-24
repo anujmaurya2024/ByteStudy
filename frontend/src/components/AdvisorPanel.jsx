@@ -170,7 +170,7 @@ export default function AdvisorPanel({
                 )}
                 <div className={`p-3.5 rounded-2xl text-xs leading-relaxed space-y-2 shadow-sm
                   ${isAi 
-                    ? 'bg-white dark:bg-surface-800 border border-slate-150 dark:border-indigo-950/15 text-slate-800 dark:text-slate-250 rounded-tl-none' 
+                    ? 'bg-white dark:bg-surface-800 border border-slate-150 dark:border-indigo-950/15 text-slate-800 dark:text-slate-100 rounded-tl-none'
                     : 'bg-indigo-600 text-white rounded-tr-none'
                   }
                 `}>

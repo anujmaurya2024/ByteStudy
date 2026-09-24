@@ -42,5 +42,5 @@ export default function MarkdownContent({ text }) {
   });
   flushList();
   flushCode();
-  return <div className="space-y-1">{blocks}</div>;
+  return <div className="space-y-1 text-inherit [&_strong]:text-inherit [&_h4]:text-inherit">{blocks}</div>;
 }
