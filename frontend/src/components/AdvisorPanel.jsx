@@ -88,7 +88,7 @@ export default function AdvisorPanel({
           </div>
           <div>
             <h3 className="font-bold text-sm text-slate-800 dark:text-slate-200 uppercase tracking-wider">Dynamic Study Audit</h3>
-            <p className="text-[10px] text-slate-500">RAG guidance grounded in your portfolio metrics</p>
+            <p className="text-[10px] text-slate-500">AI guidance grounded in your portfolio metrics</p>
           </div>
         </div>
 
@@ -122,7 +122,7 @@ export default function AdvisorPanel({
             <AlertCircle size={13} className="text-indigo-500" /> How does ByteAI work?
           </p>
           <p className="text-[11px]">
-            ByteAI uses your academic context to ground answers from the configured RAG knowledge base. If the remote service is unavailable, the local academic advisor keeps the panel usable.
+            ByteAI uses your academic context to ground answers through the configured AI provider. If the remote service is unavailable, the local academic advisor keeps the panel usable.
           </p>
         </div>
       </div>
@@ -139,7 +139,7 @@ export default function AdvisorPanel({
             <div>
               <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200">ByteAI Academic Co-Pilot</h4>
               <p className="text-[10px] text-emerald-650 dark:text-emerald-400 font-bold flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Online RAG Advisor
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Online AI Advisor
               </p>
             </div>
           </div>

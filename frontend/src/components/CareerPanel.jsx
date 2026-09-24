@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowRight, Lightbulb, Rocket, Target, ExternalLink } from 'lucide-react';
 import { CAREER_INSIGHTS } from '../data/syllabus';
+import { buildCareerRoadmap } from '../services/careerApi';
 
 const PHASE_MAP = {
   '1-2': { sems: [1, 2], label: 'Semesters 1–2' },
@@ -169,11 +170,28 @@ export default function CareerPanel({ careerPhase, currentSemester }) {
   const [selectedPhase, setSelectedPhase] = useState(careerPhase);
   const insightData = CAREER_INSIGHTS[selectedPhase];
   const phaseOrder = ['1-2', '3-4', '5-6', '7-8'];
+  const [goal, setGoal] = useState('Become a job-ready full-stack developer');
+  const [aiRoadmap, setAiRoadmap] = useState('');
+  const [roadmapLoading, setRoadmapLoading] = useState(false);
+  const [roadmapError, setRoadmapError] = useState('');
 
   // Sync selected phase with active academic phase when mounting or changing semesters
   React.useEffect(() => {
     setSelectedPhase(careerPhase);
   }, [careerPhase]);
+
+  const generateRoadmap = async (event) => {
+    event.preventDefault();
+    setRoadmapLoading(true);
+    setRoadmapError('');
+    try {
+      setAiRoadmap(await buildCareerRoadmap({ goal, phase: insightData?.phase || selectedPhase, semester: currentSemester }));
+    } catch (error) {
+      setRoadmapError(error.message);
+    } finally {
+      setRoadmapLoading(false);
+    }
+  };
 
   return (
     <div className="page-stack career-page animate-fade-in">
@@ -226,6 +244,17 @@ export default function CareerPanel({ careerPhase, currentSemester }) {
       )}
 
       {/* Resources + Roadmap */}
+      <div className="glass-card p-5 border border-indigo-500/20 bg-indigo-500/[0.03]">
+        <div className="flex items-center gap-2 mb-1"><Rocket size={15} className="text-indigo-500" /><h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">Build your AI career roadmap</h3></div>
+        <p className="text-xs text-slate-500 mb-4">Tell ByteAI what you want to become and get a practical, semester-aware plan.</p>
+        <form onSubmit={generateRoadmap} className="flex flex-col sm:flex-row gap-2">
+          <input value={goal} onChange={(event) => setGoal(event.target.value)} className="app-input flex-1" placeholder="e.g. Become a cybersecurity analyst" />
+          <button type="submit" disabled={roadmapLoading || !goal.trim()} className="btn-primary px-4 py-2.5 whitespace-nowrap disabled:opacity-50">{roadmapLoading ? 'Building…' : 'Build roadmap'}</button>
+        </form>
+        {roadmapError && <p className="text-xs text-rose-500 mt-3">{roadmapError}</p>}
+        {aiRoadmap && <div className="mt-4 p-4 rounded-xl bg-white/60 dark:bg-surface-800/40 border border-indigo-500/10 text-xs leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-line">{aiRoadmap}</div>}
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Resources */}
         <div className="glass-card p-5">

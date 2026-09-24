@@ -22,13 +22,16 @@ public class AdvisorService {
     private final ChatMessageRepository chatRepo;
     private final CgpaCalculatorService cgpaService;
     private final RagClient ragClient;
+    private final OpenRouterClient openRouterClient;
 
     public AdvisorService(ChatMessageRepository chatRepo,
                           CgpaCalculatorService cgpaService,
-                          RagClient ragClient) {
+                          RagClient ragClient,
+                          OpenRouterClient openRouterClient) {
         this.chatRepo    = chatRepo;
         this.cgpaService = cgpaService;
         this.ragClient   = ragClient;
+        this.openRouterClient = openRouterClient;
     }
 
     // ── Public API ─────────────────────────────────────────────────────────────
@@ -98,13 +101,10 @@ public class AdvisorService {
             currentSem, currentCgpa, targetCgpa, remaining,
             predictor.requiredSgpa(), attendancePct, String.join(", ", activeSubjects)
         );
-        String reply = ragClient.ask(userText.trim(), academicContext).orElseGet(() ->
-            generateReply(
-                userText.toLowerCase(),
-                currentSem, currentCgpa, targetCgpa,
-                remaining, predictor, attendancePct, activeSubjects
-            )
-        );
+        String aiSystem = "You are ByteAI, a concise and supportive academic advisor for a B.Tech CS student. Ground answers in the supplied academic context. Be practical, honest about uncertainty, and format useful plans with Markdown. Do not invent grades, attendance, policies, or deadlines.";
+        String reply = openRouterClient.ask(aiSystem, academicContext + "\n\nStudent question: " + userText.trim(), 900)
+            .or(() -> ragClient.ask(userText.trim(), academicContext))
+            .orElseGet(() -> generateReply(userText.toLowerCase(), currentSem, currentCgpa, targetCgpa, remaining, predictor, attendancePct, activeSubjects));
 
         // 4. Persist and return AI message
         ChatMessage aiMsg = ChatMessage.builder()
