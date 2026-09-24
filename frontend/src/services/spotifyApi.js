@@ -59,14 +59,15 @@ export const spotifyHasToken = () => Boolean(readToken());
 export const spotifySearch = async (query) => {
   const token = readToken();
   if (!token) throw new Error('Connect Spotify to search your music.');
-  const response = await fetch(`https://api.spotify.com/v1/search?${new URLSearchParams({ q: query, type: 'track,playlist', limit: '8' })}`, { headers: { Authorization: `Bearer ${token.access_token}` } });
+  const response = await fetch(`https://api.spotify.com/v1/search?${new URLSearchParams({ q: query, type: 'track,playlist', limit: '8' })}`, { cache: 'no-store', headers: { Authorization: `Bearer ${token.access_token}` } });
   if (response.status === 401) { spotifyLogout(); throw new Error('Your Spotify session expired. Connect again.'); }
+  if (response.status === 304) return { tracks: { items: [] }, playlists: { items: [] } };
   const data = await readResponse(response);
   if (!response.ok) {
     if (response.status === 401) spotifyLogout();
     throw new Error(data.error?.message || data.message || `Spotify search failed (${response.status}).`);
   }
-  return data;
+  return { tracks: data.tracks || { items: [] }, playlists: data.playlists || { items: [] } };
 };
 
 export const spotifyTrackEmbedUrl = (url) => {
